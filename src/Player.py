@@ -1,3 +1,4 @@
+from src.Potion import Potion
 from src.ResourceType import ResourceType
 from src.Tile import TileType, Tile
 
@@ -6,7 +7,7 @@ class Player:
     def __init__(self):
         self.actions = 5
         self.resources = {resource: 0 for resource in ResourceType}
-        self.orders = set()
+        self.orders = list()
         self.tile = None
 
     def sum_resources(self):
@@ -30,6 +31,17 @@ class Player:
         self.tile = tile
         self.tile.free = False
 
+    def fulfill_order(self, potion: Potion):
+        if not self.actions:
+            raise NotEnoughAction
+        for res_type, value in potion.resources:
+            if self.resources[res_type] < value:
+                raise NotEnoughResource
+        self.actions -= 1
+        for res_type, value in potion.resources:
+            self.resources[res_type] -= value
+        self.orders.append(potion)
+
 
 class NotEnoughAction(Exception):
     def __init__(self, *args):
@@ -44,3 +56,19 @@ class NotEnoughAction(Exception):
             return 'Not enough action, {0} '.format(self.message)
         else:
             return 'Not enough action'
+
+
+class NotEnoughResource(Exception):
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
+
+    def __str__(self):
+        print('calling str')
+        if self.message:
+            return 'Not enough resource, {0} '.format(self.message)
+        else:
+            return 'Not enough resource'
+
