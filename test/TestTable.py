@@ -14,7 +14,7 @@ class TestTable(unittest.TestCase):
         self.assertEqual(len(self.table.tiles), 36)
         for tile in self.table.tiles:
             if tile.ring == -1:
-                tile.free = False
+                tile.players.add(None)
                 self.assertEqual(5, len(tile.neighbours))
                 self.assertEqual(TileType.TOWN, tile.tile_type)
             elif tile.ring == 0:

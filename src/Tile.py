@@ -16,7 +16,7 @@ class TileType(Enum):
 
 class Tile:
     def __init__(self, tile_type: TileType = TileType.TOWN, ring: int = 0, position: int = 0):
-        self.free = True
+        self.players = set()
         self.tile_type = tile_type
         self.ring = ring
         self.neighbours = set()
@@ -24,14 +24,14 @@ class Tile:
         self.position = position
 
     def distance_to(self, tile: 'Tile', distance: int = 0, visited: set = None) -> Optional[int]:
-        if not tile.free:
+        if tile.players:
             return None
         visited = visited or set()
         visited.add(self)
         if tile in self.neighbours:
             return distance + 1
         for neighbour in self.neighbours:
-            if neighbour not in visited and neighbour.free:
+            if neighbour not in visited and not neighbour.players:
                 neighbour_distance = neighbour.distance_to(tile, distance + 1, visited)
                 if neighbour_distance:
                     return neighbour_distance

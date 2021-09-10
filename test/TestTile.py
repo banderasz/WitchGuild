@@ -1,5 +1,6 @@
 import unittest
 
+from src.Player import Player
 from src.ResourceType import ResourceType
 from src.Tile import Tile, TileType
 
@@ -67,7 +68,7 @@ class TestTile(unittest.TestCase):
         self.tile3.add_neighbour(self.tile5)
         self.tile5.add_neighbour(self.tile6)
 
-        self.tile2.free = False
+        self.tile2.players.add(None)
         tile_2a = Tile()
         self.tile1.add_neighbour(tile_2a)
         tile_2b = Tile()

@@ -8,9 +8,6 @@ class Table:
         self.tiles = set()
         self.create_table()
 
-
-
-
     def create_table(self):
         middle_town = Tile(TileType.TOWN, ring=-1)
         self.tiles.add(middle_town)
@@ -19,7 +16,7 @@ class Table:
             town.add_neighbour(middle_town)
             self.tiles.add(town)
 
-        resource_sequence = [TileType(i+1) for i in range(5)]*6
+        resource_sequence = [TileType(i + 1) for i in range(5)] * 6
         np.random.shuffle(resource_sequence)
 
         def create_ring_1_tile(offset=0):
@@ -43,4 +40,7 @@ class Table:
                 self.tiles.add(outer_tile)
             self.tiles.add(middle_tile)
 
-
+    def get_center(self):
+        for tile in self.tiles:
+            if tile.ring == -1:
+                return tile

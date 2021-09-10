@@ -43,8 +43,8 @@ class TestPlayer(unittest.TestCase):
 
     def test_moving(self):
         self.player.move_to(self.tile6)
-        self.assertFalse(self.tile6.free)
-        self.assertTrue(self.tile1.free)
+        self.assertSetEqual({self.player}, self.tile6.players)
+        self.assertSetEqual(set(), self.tile1.players)
         self.assertEqual(self.tile6, self.player.tile)
         self.assertEqual(1, self.player.actions)
 

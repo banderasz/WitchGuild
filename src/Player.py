@@ -27,9 +27,9 @@ class Player:
         if distance > self.actions:
             raise NotEnoughAction
         self.actions -= distance
-        self.tile.free = True
+        self.tile.players.discard(self)
         self.tile = tile
-        self.tile.free = False
+        self.tile.players.add(self)
 
     def fulfill_order(self, potion: Potion):
         if not self.actions:
