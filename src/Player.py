@@ -1,5 +1,8 @@
+from typing import List
+
 from src.Potion import Potion
 from src.ResourceType import ResourceType
+from src.Table import Table
 from src.Tile import TileType, Tile
 
 
@@ -9,6 +12,7 @@ class Player:
         self.resources = {resource: 0 for resource in ResourceType}
         self.potions = list()
         self.tile = None
+        self.hand_limit = 10
 
     def sum_resources(self):
         return sum([v for v in self.resources.values()])
@@ -18,8 +22,8 @@ class Player:
             raise ValueError("Can't gather in town")
         gathered = self.tile.gather()
         self.actions -= 1
-        if self.sum_resources() + gathered > 10:
-            gathered = 10 - self.sum_resources()
+        if self.sum_resources() + gathered > self.hand_limit:
+            gathered = self.hand_limit - self.sum_resources()
         self.resources[self.tile.get_token()] += gathered
 
     def move_to(self, tile: Tile):
@@ -27,7 +31,8 @@ class Player:
         if distance > self.actions:
             raise NotEnoughAction
         self.actions -= distance
-        self.tile.players.discard(self)
+        if self.tile:
+            self.tile.players.discard(self)
         self.tile = tile
         self.tile.players.add(self)
 
@@ -44,6 +49,9 @@ class Player:
 
     def sum_point(self):
         return sum([potion.point for potion in self.potions])
+
+    def action(self, table: Table, orders: List[Potion]):
+        pass
 
 
 class NotEnoughAction(Exception):

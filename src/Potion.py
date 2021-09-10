@@ -1,3 +1,4 @@
+import random
 from enum import Enum
 
 from src.ResourceType import ResourceType
@@ -21,3 +22,7 @@ class Potion(Enum):
         self.point = point
         self.resources = {ResourceType.CRYSTAL: crystal, ResourceType.HERB: herb, ResourceType.MUSHROOM: mushroom,
                           ResourceType.SPIDER_WEB: spider_web, ResourceType.BAT_WING: bat_wing}
+
+    @staticmethod
+    def get_random_order():
+        return random.choice(list(Potion))

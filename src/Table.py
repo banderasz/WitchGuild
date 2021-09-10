@@ -1,5 +1,6 @@
 import numpy as np
 
+from src.ResourceType import ResourceType
 from src.Tile import Tile, TileType
 
 
@@ -40,7 +41,13 @@ class Table:
                 self.tiles.add(outer_tile)
             self.tiles.add(middle_tile)
 
-    def get_center(self):
+    def get_center(self) -> Tile:
         for tile in self.tiles:
             if tile.ring == -1:
                 return tile
+
+    def need_refresh(self) -> bool:
+        resources = {resource: 0 for resource in ResourceType}
+        for tile in self.tiles:
+            resources[tile.get_token()] += tile.resource
+        return not all(resources.values())
