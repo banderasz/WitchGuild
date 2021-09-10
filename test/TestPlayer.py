@@ -1,6 +1,7 @@
 import unittest
 
-from src.Player import Player
+from src.Player import Player, NotEnoughResource
+from src.Potion import Potion
 from src.ResourceType import ResourceType
 from src.Tile import Tile, TileType
 
@@ -46,4 +47,22 @@ class TestPlayer(unittest.TestCase):
         self.assertTrue(self.tile1.free)
         self.assertEqual(self.tile6, self.player.tile)
         self.assertEqual(1, self.player.actions)
+
+    def test_successful_potion(self):
+        self.player.resources = {ResourceType.CRYSTAL: 2, ResourceType.HERB: 1, ResourceType.MUSHROOM: 1,
+                                 ResourceType.SPIDER_WEB: 0, ResourceType.BAT_WING: 2}
+        self.player.fulfill_order(Potion.Love)
+        self.assertDictEqual({ResourceType.CRYSTAL: 0, ResourceType.HERB: 0, ResourceType.MUSHROOM: 0,
+                              ResourceType.SPIDER_WEB: 0, ResourceType.BAT_WING: 0}, self.player.resources)
+        self.assertIn(Potion.Love, self.player.potions)
+        self.assertEqual(4, self.player.actions)
+
+    def test_unsuccessful_potion(self):
+        self.player.resources = {ResourceType.CRYSTAL: 2, ResourceType.HERB: 1, ResourceType.MUSHROOM: 1,
+                                 ResourceType.SPIDER_WEB: 0, ResourceType.BAT_WING: 1}
+        self.assertRaises(NotEnoughResource, self.player.fulfill_order, Potion.Love)
+
+    def test_sum_point(self):
+        self.player.potions.extend([Potion.Love, Potion.Truth, Potion.EyeColorChanging])
+        self.assertEqual(7, self.player.sum_point())
 

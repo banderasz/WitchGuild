@@ -7,7 +7,7 @@ class Player:
     def __init__(self):
         self.actions = 5
         self.resources = {resource: 0 for resource in ResourceType}
-        self.orders = list()
+        self.potions = list()
         self.tile = None
 
     def sum_resources(self):
@@ -34,13 +34,16 @@ class Player:
     def fulfill_order(self, potion: Potion):
         if not self.actions:
             raise NotEnoughAction
-        for res_type, value in potion.resources:
+        for res_type, value in potion.resources.items():
             if self.resources[res_type] < value:
                 raise NotEnoughResource
         self.actions -= 1
-        for res_type, value in potion.resources:
+        for res_type, value in potion.resources.items():
             self.resources[res_type] -= value
-        self.orders.append(potion)
+        self.potions.append(potion)
+
+    def sum_point(self):
+        return sum([potion.point for potion in self.potions])
 
 
 class NotEnoughAction(Exception):
