@@ -4,7 +4,7 @@ from src.Table import Table
 from src.Tile import TileType
 
 
-class TestTile(unittest.TestCase):
+class TestTable(unittest.TestCase):
 
     def setUp(self) -> None:
         self.table = Table()

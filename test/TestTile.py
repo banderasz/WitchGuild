@@ -52,3 +52,32 @@ class TestTile(unittest.TestCase):
             self.assertGreaterEqual(self.tile4.gather(), 0)
             self.assertGreaterEqual(self.tile5.gather(), 0)
             self.assertGreaterEqual(self.tile6.gather(), 0)
+
+    def test_tile_not_reachable(self):
+        self.tile3.free = False
+        self.assertIsNone(self.tile1.distance_to(self.tile6))
+        self.assertIsNone(self.tile6.distance_to(self.tile1))
+        self.assertIsNone(self.tile4.distance_to(self.tile5))
+        self.assertIsNone(self.tile5.distance_to(self.tile4))
+
+    def test_alternative_path(self):
+        self.tile1.add_neighbour(self.tile2)
+        self.tile2.add_neighbour(self.tile3)
+        self.tile3.add_neighbour(self.tile4)
+        self.tile3.add_neighbour(self.tile5)
+        self.tile5.add_neighbour(self.tile6)
+
+        self.tile2.free = False
+        tile_2a = Tile()
+        self.tile1.add_neighbour(tile_2a)
+        tile_2b = Tile()
+        tile_2a.add_neighbour(tile_2b)
+        tile_2b.add_neighbour(self.tile3)
+
+        self.assertEqual(self.tile1.distance_to(self.tile6), 5)
+        self.assertEqual(self.tile6.distance_to(self.tile1), 5)
+        self.assertEqual(self.tile4.distance_to(self.tile5), 2)
+        self.assertEqual(self.tile5.distance_to(self.tile4), 2)
+        self.assertEqual(self.tile6.distance_to(self.tile4), 3)
+        self.assertEqual(self.tile4.distance_to(self.tile6), 3)
+
