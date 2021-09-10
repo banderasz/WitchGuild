@@ -13,6 +13,9 @@ class TileType(Enum):
     MUSHROOM = 5
     TOWN = 6
 
+    def __str__(self):
+        return str(self.value)
+
 
 class Tile:
     def __init__(self, tile_type: TileType = TileType.TOWN, ring: int = 0, position: int = 0):
@@ -23,7 +26,10 @@ class Tile:
         self.resource = ring
         self.position = position
 
-    def distance_to(self, tile: 'Tile', distance: int = 0, visited: set = None) -> Optional[int]:
+    def __str__(self):
+        return "{}, {}".format(self.ring, self.position)
+
+    def distance_to2(self, tile: 'Tile', distance: int = 0, visited: set = None) -> Optional[int]:
         if tile.players:
             return None
         visited = visited or set()
@@ -36,6 +42,23 @@ class Tile:
                 if neighbour_distance:
                     return neighbour_distance
         return None
+
+    def distance_to(self, tile: 'Tile', distance=0, visited=None):
+        visited = []
+        queue = [self]
+        self.distance = 0
+        while queue:
+            node = queue.pop(0)
+            if tile in node.neighbours:
+                return node.distance + 1
+            if node not in visited:
+                visited.append(node)
+                for neighbour in node.neighbours:
+                    if not neighbour.players:
+                        neighbour.distance = node.distance + 1
+                        queue.append(neighbour)
+        return None
+
 
     def add_neighbour(self, tile: 'Tile') -> None:
         self.neighbours.add(tile)

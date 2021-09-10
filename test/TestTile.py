@@ -14,6 +14,7 @@ class TestTile(unittest.TestCase):
         self.tile4 = Tile(TileType.MUSHROOM, 2)
         self.tile5 = Tile(TileType.CRYSTAL, 2)
         self.tile6 = Tile(TileType.SPIDER_WEB, 3)
+        self.tile7 = Tile(TileType.BAT_WING, 1)
 
     def test_neighbours_added_to_both(self):
         self.tile1.add_neighbour(self.tile2)
@@ -22,6 +23,7 @@ class TestTile(unittest.TestCase):
 
     def test_difference_between_tiles(self):
         self.tile1.add_neighbour(self.tile2)
+        self.tile1.add_neighbour(self.tile7)
         self.tile2.add_neighbour(self.tile3)
         self.tile3.add_neighbour(self.tile4)
         self.tile3.add_neighbour(self.tile5)
@@ -75,10 +77,10 @@ class TestTile(unittest.TestCase):
         tile_2a.add_neighbour(tile_2b)
         tile_2b.add_neighbour(self.tile3)
 
-        self.assertEqual(self.tile1.distance_to(self.tile6), 5)
-        self.assertEqual(self.tile6.distance_to(self.tile1), 5)
-        self.assertEqual(self.tile4.distance_to(self.tile5), 2)
-        self.assertEqual(self.tile5.distance_to(self.tile4), 2)
-        self.assertEqual(self.tile6.distance_to(self.tile4), 3)
-        self.assertEqual(self.tile4.distance_to(self.tile6), 3)
+        self.assertEqual(5, self.tile1.distance_to(self.tile6))
+        self.assertEqual(5, self.tile6.distance_to(self.tile1))
+        self.assertEqual(2, self.tile4.distance_to(self.tile5))
+        self.assertEqual(2, self.tile5.distance_to(self.tile4))
+        self.assertEqual(3, self.tile6.distance_to(self.tile4))
+        self.assertEqual(3, self.tile4.distance_to(self.tile6))
 

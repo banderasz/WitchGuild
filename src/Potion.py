@@ -18,7 +18,7 @@ class Potion(Enum):
     Invisibility = (2, 1, 0, 2, 1, 0)
     Health = (3, 1, 2, 1, 1, 1)
 
-    def __init__(self, point, crystal, herb, mushroom, spider_web, bat_wing):
+    def __init__(self, point, crystal=0, herb=0, mushroom=0, spider_web=0, bat_wing=0):
         self.point = point
         self.resources = {ResourceType.CRYSTAL: crystal, ResourceType.HERB: herb, ResourceType.MUSHROOM: mushroom,
                           ResourceType.SPIDER_WEB: spider_web, ResourceType.BAT_WING: bat_wing}

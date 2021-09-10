@@ -1,4 +1,6 @@
 from typing import List
+import numpy as np
+import copy
 
 from src.Potion import Potion
 from src.ResourceType import ResourceType
@@ -27,11 +29,11 @@ class Player:
         self.resources[self.tile.get_token()] += gathered
 
     def move_to(self, tile: Tile):
-        distance = self.tile.distance_to(tile)
-        if distance > self.actions:
-            raise NotEnoughAction
-        self.actions -= distance
         if self.tile:
+            distance = self.tile.distance_to(tile)
+            if distance > self.actions:
+                raise NotEnoughAction
+            self.actions -= distance
             self.tile.players.discard(self)
         self.tile = tile
         self.tile.players.add(self)
@@ -51,7 +53,15 @@ class Player:
         return sum([potion.point for potion in self.potions])
 
     def action(self, table: Table, orders: List[Potion]):
-        pass
+        prioritized = sorted(orders, key=self.priority_potion, reverse=True)
+
+
+
+    def priority_potion(self, potion: Potion):
+        missing = sum([value - self.resources[key] for key, value in potion.resources.items() if value > self.resources[key]])
+        return np.divide(potion.point, missing)
+
+
 
 
 class NotEnoughAction(Exception):

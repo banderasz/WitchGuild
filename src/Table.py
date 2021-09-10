@@ -1,4 +1,8 @@
+from typing import Set
+
 import numpy as np
+import networkx as nx
+from matplotlib import pyplot as plt
 
 from src.ResourceType import ResourceType
 from src.Tile import Tile, TileType
@@ -6,7 +10,7 @@ from src.Tile import Tile, TileType
 
 class Table:
     def __init__(self):
-        self.tiles = set()
+        self.tiles: Set[Tile] = set()
         self.create_table()
 
     def create_table(self):
@@ -51,3 +55,14 @@ class Table:
         for tile in self.tiles:
             resources[tile.get_token()] += tile.resource
         return not all(resources.values())
+
+    def nearest_town(self, tile):
+        return sorted([(town, tile.distance_to(town)) for town in self.tiles if town.tile_type == TileType.TOWN]
+                      , key=lambda x: x[1])[0][0]
+
+    def visualize_table(self):
+        G = nx.Graph()
+        for tile in self.tiles:
+            G.add_edges_from([(tile, neighbour) for neighbour in tile.neighbours])
+        nx.draw_networkx(G)
+        plt.show()

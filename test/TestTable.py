@@ -31,7 +31,7 @@ class TestTable(unittest.TestCase):
                 self.assertEqual(1, len(tile.neighbours))
                 self.assertNotEqual(TileType.TOWN, tile.tile_type)
         first_tile = position_0.pop()
-        self.assertSetEqual({4, 8, 12, 16}, {first_tile.distance_to(pos0_tile) for pos0_tile in position_0})
+        self.assertSetEqual({4, 8}, {first_tile.distance_to(pos0_tile) for pos0_tile in position_0})
 
     def test_get_center(self):
         self.assertEqual(TileType.TOWN, self.table.get_center().tile_type)
@@ -49,3 +49,19 @@ class TestTable(unittest.TestCase):
         self.table.tiles.add(Tile(TileType.HERB, ring=3))
         self.assertFalse(self.table.need_refresh())
 
+    def test_nearest_town(self):
+        tile_1 = None
+        tile_2 = None
+        tile_3 = None
+        for tile in self.table.tiles:
+            if tile.ring == 1:
+                tile_1 = tile
+            elif tile.ring == 2:
+                tile_2 = tile
+            elif tile.ring == 3:
+                tile_3 = tile
+            if tile_1 and tile_2 and tile_3:
+                break
+        self.assertEqual(1, self.table.nearest_town(tile_1).distance_to(tile_1))
+        self.assertEqual(2, self.table.nearest_town(tile_2).distance_to(tile_2))
+        self.assertEqual(3, self.table.nearest_town(tile_3).distance_to(tile_3))
