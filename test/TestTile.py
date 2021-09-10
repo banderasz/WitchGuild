@@ -1,5 +1,6 @@
 import unittest
 
+from src.ResourceType import ResourceType
 from src.Tile import Tile, TileType
 
 
@@ -8,10 +9,10 @@ class TestTile(unittest.TestCase):
     def setUp(self) -> None:
         self.tile1 = Tile()
         self.tile2 = Tile()
-        self.tile3 = Tile(TileType.HERB)
-        self.tile4 = Tile(TileType.MUSHROOM)
-        self.tile5 = Tile(TileType.CRYSTAL)
-        self.tile6 = Tile(TileType.SPIDER_WEB)
+        self.tile3 = Tile(TileType.HERB, 1)
+        self.tile4 = Tile(TileType.MUSHROOM, 2)
+        self.tile5 = Tile(TileType.CRYSTAL, 2)
+        self.tile6 = Tile(TileType.SPIDER_WEB, 3)
 
     def test_neighbours_added_to_both(self):
         self.tile1.add_neighbour(self.tile2)
@@ -31,3 +32,23 @@ class TestTile(unittest.TestCase):
         self.assertEqual(self.tile5.distance_to(self.tile4), 2)
         self.assertEqual(self.tile6.distance_to(self.tile4), 3)
         self.assertEqual(self.tile4.distance_to(self.tile6), 3)
+
+    def test_get_token(self):
+        self.assertIsNone(self.tile1.get_token())
+        self.assertIsNone(self.tile2.get_token())
+        self.assertEqual(self.tile3.get_token(), ResourceType.HERB)
+        self.assertEqual(self.tile4.get_token(), ResourceType.MUSHROOM)
+        self.assertEqual(self.tile5.get_token(), ResourceType.CRYSTAL)
+        self.assertEqual(self.tile6.get_token(), ResourceType.SPIDER_WEB)
+
+    def test_gather(self):
+        for _ in range(1000):
+            self.assertLessEqual(self.tile3.gather(), 1)
+            self.assertLessEqual(self.tile4.gather(), 2)
+            self.assertLessEqual(self.tile5.gather(), 3)
+            self.assertLessEqual(self.tile6.gather(), 3)
+
+            self.assertGreaterEqual(self.tile3.gather(), 0)
+            self.assertGreaterEqual(self.tile4.gather(), 0)
+            self.assertGreaterEqual(self.tile5.gather(), 0)
+            self.assertGreaterEqual(self.tile6.gather(), 0)

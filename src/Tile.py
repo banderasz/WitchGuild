@@ -1,5 +1,8 @@
 from enum import Enum
 from typing import Optional
+import numpy as np
+
+from src.ResourceType import ResourceType
 
 
 class TileType(Enum):
@@ -12,9 +15,11 @@ class TileType(Enum):
 
 
 class Tile:
-    def __init__(self, tile_type: TileType = TileType.TOWN):
+    def __init__(self, tile_type: TileType = TileType.TOWN, position: int = 0):
         self.tile_type = tile_type
+        self.position = position
         self.neighbours = set()
+        self.resource = position
 
     def distance_to(self, tile: 'Tile', distance: int = 0, visited: set = None) -> Optional[int]:
         visited = visited or set()
@@ -31,3 +36,15 @@ class Tile:
     def add_neighbour(self, tile: 'Tile') -> None:
         self.neighbours.add(tile)
         tile.neighbours.add(self)
+
+    def get_token(self):
+        if self.tile_type == TileType.TOWN:
+            return None
+        return ResourceType(self.tile_type.value)
+
+    def gather(self):
+        gathered = sum(np.random.randint(1, 7, self.position * 2) > 4)
+        if gathered > self.resource:
+            gathered = self.resource
+        self.resource -= gathered
+        return gathered
