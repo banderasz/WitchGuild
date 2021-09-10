@@ -15,12 +15,13 @@ class TileType(Enum):
 
 
 class Tile:
-    def __init__(self, tile_type: TileType = TileType.TOWN, position: int = 0):
+    def __init__(self, tile_type: TileType = TileType.TOWN, ring: int = 0, position: int = 0):
         self.free = True
         self.tile_type = tile_type
-        self.position = position
+        self.ring = ring
         self.neighbours = set()
-        self.resource = position
+        self.resource = ring
+        self.position = position
 
     def distance_to(self, tile: 'Tile', distance: int = 0, visited: set = None) -> Optional[int]:
         if not tile.free:
@@ -46,7 +47,7 @@ class Tile:
         return ResourceType(self.tile_type.value)
 
     def gather(self):
-        gathered = sum(np.random.randint(1, 7, self.position * 2) > 4)
+        gathered = sum(np.random.randint(1, 7, self.ring * 2) > 4)
         if gathered > self.resource:
             gathered = self.resource
         self.resource -= gathered

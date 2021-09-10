@@ -29,7 +29,7 @@ class TestPlayer(unittest.TestCase):
         self.player.tile = self.tile3
         for _ in range(1000):
             self.player.gather()
-            self.assertLessEqual(self.player.resources[self.tile3.get_token()], self.tile3.position)
+            self.assertLessEqual(self.player.resources[self.tile3.get_token()], self.tile3.ring)
             self.assertGreaterEqual(self.player.resources[self.tile3.get_token()], 0)
 
     def test_hand_limit(self):
