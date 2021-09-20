@@ -1,5 +1,6 @@
 import unittest
 
+from src.ResourceType import ResourceType
 from src.Table import Table
 from src.Tile import TileType, Tile
 
@@ -65,3 +66,10 @@ class TestTable(unittest.TestCase):
         self.assertEqual(1, self.table.nearest_town(tile_1).distance_to(tile_1))
         self.assertEqual(2, self.table.nearest_town(tile_2).distance_to(tile_2))
         self.assertEqual(3, self.table.nearest_town(tile_3).distance_to(tile_3))
+
+    def test_get_all_of_type(self):
+        self.assertEqual(6, len(self.table.get_all_of_type(TileType.HERB)))
+        self.assertEqual(6, len(self.table.get_all_of_type(TileType.CRYSTAL)))
+        self.assertEqual(6, len(self.table.get_all_of_type(TileType.SPIDER_WEB)))
+        self.assertEqual(6, len(self.table.get_all_of_type(TileType.MUSHROOM)))
+        self.assertEqual(6, len(self.table.get_all_of_type(TileType.BAT_WING)))

@@ -1,3 +1,4 @@
+import math
 from enum import Enum
 from typing import Optional
 import numpy as np
@@ -15,6 +16,14 @@ class TileType(Enum):
 
     def __str__(self):
         return str(self.value)
+
+
+def k_out_of_n_probability(n: int, k: int, p: float) -> float:
+    return math.comb(n, k) * p ** k * (1 - p) ** (n - k)
+
+
+def at_least_k_out_of_n_probability(n: int, k: int, p: float) -> float:
+    return sum([k_out_of_n_probability(n, dices, p) for dices in range(k, n + 1)])
 
 
 class Tile:
@@ -59,6 +68,31 @@ class Tile:
                         queue.append(neighbour)
         return None
 
+    def expected_resource(self):
+        p = 1 / 3
+        expected_value = self.resource * at_least_k_out_of_n_probability(self.ring * 2, self.resource, p)
+        for dices in range(1, self.resource):
+            expected_value += dices * k_out_of_n_probability((self.ring * 2), dices, p)
+        return expected_value
+
+    def turns_to_collect(self, n: int) -> float:
+        p = 1 / 3
+        if n > self.resource:
+            return np.inf
+        if n == 1:
+            x = at_least_k_out_of_n_probability(self.ring * 2, n, p)
+            return 1 / x  # sum (n+1) * (1-x)^n * (x), n=0 to infinity
+        if n == 2:
+            x = at_least_k_out_of_n_probability(self.ring * 2, n, p)
+            y = k_out_of_n_probability(self.ring * 2, 1, p)
+            return (x + 2 * y) / (x + y) ** 2  # sum  (1-x-y)^n * ((n+1) * x +  y * (n+1+1/(x+y)) ), n=0 to infinity
+        if n == 3:
+            x = at_least_k_out_of_n_probability(self.ring * 2, n, p)
+            y = k_out_of_n_probability(self.ring * 2, 2, p)
+            z = k_out_of_n_probability(self.ring * 2, 1, p)
+            return (x ** 2 + 3 * x * y + 3 * x * z + 2 * y ** 2 + 4 * y * z + 3 * z ** 2) \
+                   / ((x + y + z) ** 3)  # sum  (1-x-y-z)^n * ((n+1) * x + y * (n+1+1/(x+y+z)) + z * ((((x+y) + 2z)/(
+            # x+y+z)^2 )+n+1)), n=0 to infinity
 
     def add_neighbour(self, tile: 'Tile') -> None:
         self.neighbours.add(tile)

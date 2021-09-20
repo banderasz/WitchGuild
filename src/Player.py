@@ -54,14 +54,19 @@ class Player:
 
     def action(self, table: Table, orders: List[Potion]):
         prioritized = sorted(orders, key=self.priority_potion, reverse=True)
-
-
+        if self.priority_potion(prioritized[0]) is np.inf:
+            self.move_to(table.nearest_town(self.tile))
+        else:
+            goal_resource = sorted(self.missing_resources(prioritized[0].resources).items(),
+                                   key=lambda x: x[1], reverse=True)[0]
+            [tile.expected_resource() for tile in table.get_all_of_type(goal_resource[0])]
 
     def priority_potion(self, potion: Potion):
-        missing = sum([value - self.resources[key] for key, value in potion.resources.items() if value > self.resources[key]])
+        missing = sum(self.missing_resources(potion.resources).values())
         return np.divide(potion.point, missing)
 
-
+    def missing_resources(self, resources: dict) -> dict:
+        return {key: value - self.resources[key] for key, value in resources.items() if value > self.resources[key]}
 
 
 class NotEnoughAction(Exception):
@@ -92,4 +97,3 @@ class NotEnoughResource(Exception):
             return 'Not enough resource, {0} '.format(self.message)
         else:
             return 'Not enough resource'
-

@@ -1,8 +1,10 @@
 import unittest
 
+import numpy as np
+
 from src.Player import Player
 from src.ResourceType import ResourceType
-from src.Tile import Tile, TileType
+from src.Tile import Tile, TileType, at_least_k_out_of_n_probability
 
 
 class TestTile(unittest.TestCase):
@@ -84,3 +86,49 @@ class TestTile(unittest.TestCase):
         self.assertEqual(3, self.tile6.distance_to(self.tile4))
         self.assertEqual(3, self.tile4.distance_to(self.tile6))
 
+    def test_expected_value(self):
+        self.assertAlmostEqual(0.55555, self.tile3.expected_resource(), 4)
+        self.tile3.resource -= 1
+        self.assertAlmostEqual(0, self.tile3.expected_resource(), 4)
+
+        self.assertAlmostEqual(1.20987, self.tile4.expected_resource(), 4)
+        self.tile4.resource -= 1
+        self.assertAlmostEqual(0.802469, self.tile4.expected_resource(), 4)
+        self.tile4.resource -= 1
+        self.assertAlmostEqual(0, self.tile4.expected_resource(), 4)
+
+        self.assertAlmostEqual(1.88065, self.tile6.expected_resource(), 4)
+        self.tile6.resource -= 1
+        self.assertAlmostEqual(1.5610, self.tile6.expected_resource(), 4)
+        self.tile6.resource -= 1
+        self.assertAlmostEqual(0.9122, self.tile6.expected_resource(), 4)
+        self.tile6.resource -= 1
+        self.assertAlmostEqual(0, self.tile6.expected_resource(), 4)
+
+    def test_at_least_n_out_of_k_probability(self):
+        self.assertAlmostEqual(0.33333, at_least_k_out_of_n_probability(1, 1, 1 / 3), 4)
+        self.assertAlmostEqual(0.33333, at_least_k_out_of_n_probability(1, 1, 1 / 3), 4)
+        self.assertAlmostEqual(0.55555, at_least_k_out_of_n_probability(2, 1, 1 / 3), 4)
+        self.assertAlmostEqual(0.40740, at_least_k_out_of_n_probability(4, 2, 1 / 3), 4)
+
+    def test_turns_to_collect(self):
+        self.assertAlmostEqual(1.8, self.tile3.turns_to_collect(1), 4)
+        self.assertAlmostEqual(1.24615, self.tile4.turns_to_collect(1), 4)
+        self.assertAlmostEqual(1.09625, self.tile6.turns_to_collect(1), 4)
+
+        self.assertAlmostEqual(1.85964, self.tile4.turns_to_collect(2), 4)
+        self.assertAlmostEqual(1.41274, self.tile6.turns_to_collect(2), 4)
+
+        self.assertAlmostEqual(1.89976, self.tile6.turns_to_collect(3), 4)
+
+    def test_random(self):
+        N = 1_000_000
+        result = 0
+        for _ in range(N):
+            self.tile6.resource = 3
+            turns = 0
+            while self.tile6.resource:
+                turns += 1
+                self.tile6.gather()
+            result += turns
+        print(result/N)

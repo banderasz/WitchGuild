@@ -66,3 +66,6 @@ class Table:
             G.add_edges_from([(tile, neighbour) for neighbour in tile.neighbours])
         nx.draw_networkx(G)
         plt.show()
+
+    def get_all_of_type(self, tile_type: TileType):
+        return [tile for tile in self.tiles if tile.tile_type == tile_type]
